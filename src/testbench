@@ -1,0 +1,235 @@
+`timescale 1ns / 1ps
+module top_tb;
+reg clk;
+reg rst;
+reg rx;
+wire TX_data_out;
+// Instantiate the DUT (Device Under Test)
+toplevel uut (
+.clk(clk),
+.rst(rst),
+.rx(rx),
+.TX_data_out(TX_data_out)
+);
+// Clock generation: 100 MHz
+initial begin
+clk = 0;
+forever #5 clk = ~clk;
+end
+// UART bit duration for 115200 baud rate = 8680 ns (assuming 100 MHz clock)
+localparam BIT_TIME = 8680;
+initial begin
+// Initial states
+rx = 1;
+rst = 1;
+#100;
+rst = 0;
+#10000;
+//sending cmd to write data 12ff in register 3
+// === Send 8'hA5 ===
+rx = 0; #(BIT_TIME); // Start bit
+
+rx = 1; #(BIT_TIME); // Bit 0
+rx = 0; #(BIT_TIME); // Bit 1
+rx = 1; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 1; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 1; #(BIT_TIME); // Bit 7
+rx = 0; #(BIT_TIME); // Even parity
+rx = 1; #(BIT_TIME); // Stop bit
+#10000;
+// === Send 8'h01 ===
+rx = 0; #(BIT_TIME); // Start bit
+rx = 1; #(BIT_TIME); // Bit 0
+rx = 0; #(BIT_TIME); // Bit 1
+rx = 0; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 0; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 0; #(BIT_TIME); // Bit 7
+rx = 1; #(BIT_TIME); // Even parity (01 = 00000001 => parity = 1)
+rx = 1; #(BIT_TIME); // Stop bit
+#10000;
+// === Send 8'h03 ===
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'h12===
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'hFF ===
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+
+#50000;
+//sending cmd to write data abcd in register 1
+// === Send 8'hA5 ===
+rx = 0; #(BIT_TIME); // Start bit
+rx = 1; #(BIT_TIME); // Bit 0
+rx = 0; #(BIT_TIME); // Bit 1
+rx = 1; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 1; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 1; #(BIT_TIME); // Bit 7
+rx = 0; #(BIT_TIME); // Even parity (A5 = 10100101 => even parity = 0)
+rx = 1; #(BIT_TIME); // Stop bit
+#10000;
+// === Send 8'h01 ===
+rx = 0; #(BIT_TIME); // Start bit
+rx = 1; #(BIT_TIME); // Bit 0
+rx = 0; #(BIT_TIME); // Bit 1
+rx = 0; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 0; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 0; #(BIT_TIME); // Bit 7
+rx = 1; #(BIT_TIME); // Even parity (01 = 00000001 => parity = 1)
+rx = 1; #(BIT_TIME); // Stop bit
+#10000;
+// === Send 8'h01 ===
+
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'hAB ===
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'hcd ===
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+//sending cmd to read data in register 3
+// === Send 8'hA5 ===
+rx = 0; #(BIT_TIME); // Start bit
+rx = 1; #(BIT_TIME); // Bit 0
+rx = 0; #(BIT_TIME); // Bit 1
+rx = 1; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 1; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 1; #(BIT_TIME); // Bit 7
+rx = 0; #(BIT_TIME); // Even parity
+rx = 1; #(BIT_TIME); // Stop bit
+#10000;
+// === Send 8'h02 ===
+rx = 0; #(BIT_TIME); // Start bit
+rx = 0; #(BIT_TIME); // Bit 0
+rx = 1; #(BIT_TIME); // Bit 1
+rx = 0; #(BIT_TIME); // Bit 2
+rx = 0; #(BIT_TIME); // Bit 3
+rx = 0; #(BIT_TIME); // Bit 4
+rx = 0; #(BIT_TIME); // Bit 5
+rx = 0; #(BIT_TIME); // Bit 6
+rx = 0; #(BIT_TIME); // Bit 7
+rx = 1; #(BIT_TIME); //even parity
+rx = 1; #(BIT_TIME); // Stop bit
+
+#10000;
+// === Send 8'h03 ===
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'h00 ===
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#10000;
+// === Send 8'h00 ===
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+49
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 0; #(BIT_TIME);
+rx = 1; #(BIT_TIME);
+#100000;
+$finish;
+end
+endmodule
